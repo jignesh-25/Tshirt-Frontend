@@ -3,7 +3,7 @@ import Base from "./Base";
 
 export default function Home() {
   return (
-    <Base title="Home Page">
+    <Base title="Home Page" description="Welcome to the tshirt store!">
       <div className="row">
         <div className="col-4">
           Until recently, the prevailing view assumed lorem ipsum was born as a
