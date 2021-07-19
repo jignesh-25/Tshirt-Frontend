@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Base from "../core/Base";
 import { signup } from "../auth/helper";
+import { Link } from "react-router-dom";
 
 const Signup = () => {
   const [values, setValues] = useState({
@@ -49,6 +50,7 @@ const Signup = () => {
                 className="form-control"
                 type="text"
                 onChange={handleChange("name")}
+                value={name}
               />
             </div>
 
@@ -58,6 +60,7 @@ const Signup = () => {
                 className="form-control"
                 type="email"
                 onChange={handleChange("email")}
+                value={email}
               />
             </div>
 
@@ -67,10 +70,14 @@ const Signup = () => {
                 className="form-control"
                 type="password"
                 onChange={handleChange("password")}
+                value={password}
               />
             </div>
 
-            <button className="btn btn-success btn-block form-control mt-2">
+            <button
+              onClick={onSubmit}
+              className="btn btn-success btn-block form-control mt-2"
+            >
               Submit
             </button>
           </form>
@@ -79,8 +86,41 @@ const Signup = () => {
     );
   };
 
+  const successMessage = () => {
+    return (
+      <div className="row">
+        <div className="col-md-6 offset-sm-3 text-left">
+          <div
+            className="alert alert-success"
+            style={{ display: success ? "" : "none" }}
+          >
+            New account was created successfully. Please{" "}
+            <Link to="/signin">Login Here</Link>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const errorMessage = () => {
+    return (
+      <div className="row">
+        <div className="col-md-6 offset-sm-3 text-left">
+          <div
+            className="alert alert-danger"
+            style={{ display: error ? "" : "none" }}
+          >
+            {error}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Base title="Signup page" description="Page for sign up!">
+      {successMessage()}
+      {errorMessage()}
       {signUpForm()}
     </Base>
   );
