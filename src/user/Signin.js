@@ -32,7 +32,9 @@ const Signin = () => {
           });
         }
       })
-      .catch(console.log("signin request failed!"));
+      .catch((error) => {
+        console.log("error ==>> ", error);
+      });
   };
 
   const performRedirect = () => {
@@ -99,7 +101,7 @@ const Signin = () => {
             </div>
 
             <button
-              onclick={onSubmit}
+              onClick={onSubmit}
               className="btn btn-success btn-block form-control mt-2"
             >
               Submit
