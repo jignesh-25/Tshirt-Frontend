@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Base from "../core/Base";
 import { getCategories } from "./helper/adminapicall";
+import { isAuthenticated } from "../auth/helper";
 
 const AddProduct = () => {
+  const { user, token } = isAuthenticated();
   const [values, setValues] = useState({
     name: "",
     description: "",
@@ -18,6 +20,25 @@ const AddProduct = () => {
     getaRedirect: false,
     formData: "",
   });
+
+  const preload = () => {
+    getCategories().then((data) => {
+      if (data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        setValues({
+          ...values,
+          categories: data.items,
+          formData: new FormData(),
+        });
+      }
+    });
+  };
+
+  useEffect(() => {
+    preload();
+  }, []);
+
   const {
     name,
     description,
@@ -33,28 +54,14 @@ const AddProduct = () => {
     formData,
   } = values;
 
-  const preload = () => {
-    getCategories().then((data) => {
-      console.log(" <<== data ==>> ", data);
-      if (data.error) {
-        setValues({ ...values, error: data.error });
-      } else {
-        setValues({ ...values, categories: data, formData: new formData() });
-        console.log(" <<== categories ==>> ", categories);
-      }
-    });
-  };
-
-  useEffect(() => {
-    preload();
-  }, []);
-
   const onSubmit = () => {
     //
   };
 
-  const handleChange = () => {
-    //
+  const handleChange = (name) => (event) => {
+    const value = name === "photo" ? event.target.file[0] : event.target.value;
+    formData.set(name, value);
+    setValues({ ...values, [name]: value });
   };
 
   const createProductForm = () => (
@@ -105,8 +112,12 @@ const AddProduct = () => {
           placeholder="Category"
         >
           <option>Select</option>
-          <option value="a">a</option>
-          <option value="b">b</option>
+          {categories &&
+            categories.map((cate, index) => (
+              <option key={index} value={cate._id}>
+                {cate.name}
+              </option>
+            ))}
         </select>
       </div>
       <div className="form-group mb-3">
