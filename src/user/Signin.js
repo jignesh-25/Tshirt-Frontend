@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import Base from "../core/Base";
 import { Link, Redirect } from "react-router-dom";
-import { signin, authenticate, isAuthenticated } from "../auth/helper";
+import {
+  signin,
+  loginWithGoogle,
+  authenticate,
+  isAuthenticated,
+} from "../auth/helper";
+import { GoogleLogin } from "react-google-login";
 
 const Signin = () => {
   const [values, setValues] = useState({
@@ -75,6 +81,32 @@ const Signin = () => {
     );
   };
 
+  const ColoredLine = ({ color }) => (
+    <hr
+      style={{
+        color: color,
+        backgroundColor: color,
+        height: 5,
+      }}
+    />
+  );
+
+  const responseGoogle = (response) => {
+    loginWithGoogle(response.tokenId)
+      .then((data) => {
+        if (data.error) {
+          setValues({ ...values, error: data.error, loading: false });
+        } else {
+          authenticate(data, () => {
+            setValues({ ...values, didRedirect: true });
+          });
+        }
+      })
+      .catch((error) => {
+        console.log("error ==>> ", error);
+      });
+  };
+
   const signInForm = () => {
     return (
       <div className="row">
@@ -107,6 +139,15 @@ const Signin = () => {
               Submit
             </button>
           </form>
+          <ColoredLine color="white" />
+          <GoogleLogin
+            className="form-control"
+            clientId="1072416019688-7pc4f0ml5lbq04dn8stagrv9tbto92en.apps.googleusercontent.com"
+            buttonText="Login with Google"
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+            cookiePolicy={"single_host_origin"}
+          />
         </div>
       </div>
     );
